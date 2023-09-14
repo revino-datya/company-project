@@ -7,7 +7,7 @@ import (
 
     "github.com/gin-gonic/gin"
     "github.com/go-playground/validator/v10"
-    "company-project/user" // Sesuaikan dengan path yang benar
+    "company-project/user" 
 )
 
 type userHandler struct {
