@@ -6,6 +6,7 @@ import (
 	"company-project/employee"
 	"company-project/handler"
 	"company-project/initializers"
+	"company-project/middleware"
 
 	"company-project/user"
 	// "company-project/employee"
@@ -37,27 +38,28 @@ func main() {
 	employeeRepository := employee.NewRepository(db)
 
 	userRepository := user.NewRepository(db)
-	userService := user.NewService(userRepository,employeeRepository)
+	userService := user.NewService(userRepository, employeeRepository)
 	userHandler := handler.NewUserHandler(userService)
 
 	router := gin.Default()
 
 	routerV1 := router.Group("/v1")
 
-	routerV1.POST("/department", departmentHandler.PostDepartmentHandler)
+	routerV1User := routerV1.Group("/user", middleware.RequireAuth)
 
-	routerV1.PUT("/department/:id", departmentHandler.UpdateDepartmentHandler)
+	routerV1User.POST("/department", departmentHandler.PostDepartmentHandler)
 
-	routerV1.DELETE("/department/:id", departmentHandler.DeleteDepartment)
+	routerV1User.PUT("/department/:id", departmentHandler.UpdateDepartmentHandler)
 
-	routerV1.GET("/department", departmentHandler.GetAllDepartments)
+	routerV1User.DELETE("/department/:id", departmentHandler.DeleteDepartment)
 
-	routerV1.GET("/department/:id", departmentHandler.GetDepartmentByID)
+	routerV1User.GET("/department", departmentHandler.GetAllDepartments)
 
+	routerV1User.GET("/department/:id", departmentHandler.GetDepartmentByID)
 
 	routerV1.POST("/signup", userHandler.CreateUserHandler)
 
-	// routerV1.POST("/login", userHandler.Login)
+	routerV1.POST("/login", userHandler.Login)
 
 	router.Run(":3030")
 }
