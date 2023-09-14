@@ -1,6 +1,8 @@
 package user
 
 type UserResponse struct {
-	Email string `json:"Email"`
-	Password string `json:"Password"`
+    ID    uint   `json:"id"`
+    Email string `json:"email"`
+    Name  string `json:"name"`
+    Phone int    `json:"phone"`
 }

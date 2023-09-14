@@ -21,7 +21,7 @@ func NewDepartmentHandler(service department.Service) *departmentHandler {
 	return &departmentHandler{service}
 }
 
-func (h *departmentHandler) PostBooksHandler(c *gin.Context) {
+func (h *departmentHandler) PostDepartmentHandler(c *gin.Context) {
 	var departmentRequest department.DepartmentRequest
 
 	err := c.ShouldBindJSON(&departmentRequest)

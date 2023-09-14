@@ -1,35 +1,54 @@
 package user
 
+import (
+    "golang.org/x/crypto/bcrypt"
+    "company-project/employee"
+)
+
 type Service interface {
-	FindAll() ([]User, error)
-	FindByID(ID int) (User, error)
-	Create(userRequest UserRequest) (User, error)
+    CreateUser(userRequest UserRequest) (UserResponse, error)
 }
 
 type service struct {
-	repository Repository
+    repository     Repository
+    employeeRepo   employee.Repository
 }
 
-func NewService(repository Repository) *service {
-	return &service{repository}
+func NewService(repository Repository, employeeRepo employee.Repository) Service {
+    return &service{repository, employeeRepo}
 }
 
-func (s *service) FindAll() ([]User, error) {
-	users, err := s.repository.FindAll()
-	return users, err
+func (s *service) CreateUser(userRequest UserRequest) (UserResponse, error) {
+    // Generate hashed password
+    hashedPassword, err := bcrypt.GenerateFromPassword([]byte(userRequest.Password), bcrypt.DefaultCost)
+    if err != nil {
+        return UserResponse{}, err
+    }
+
+    // Create User entity
+    newUser := User{
+        Email:    userRequest.Email,
+        Password: string(hashedPassword),
+    }
+
+    // Create Employee entity with null DepartmentID
+    newEmployee := employee.Employee{
+        Name:         userRequest.Name,
+        Phone:        userRequest.Phone,
+        DepartmentID: nil,
+    }
+
+    // Associate Employee with User
+    newUser.Employee = newEmployee
+
+    // Save User to the database
+    createdUser, err := s.repository.Create(newUser)
+    if err != nil {
+        return UserResponse{}, err
+    }
+
+    // Use a mapper to transform the User entity to UserResponse
+    userResponse := ConvertToUserResponse(createdUser)
+
+    return userResponse, nil
 }
-
-func (s *service) FindByID(ID int) (User, error) {
-	user, err := s.repository.FindByID(ID)
-	return user, err
-}
-
-// func (s *service) Create(userRequest UserRequest) (User, error) {
-// 	user := User{
-// 		Email:    userRequest.Email,
-// 		Password: userRequest.Password,
-// 	}
-
-// 	newUser, err := s.repository.Create(user)
-// 	return newUser, err
-// }

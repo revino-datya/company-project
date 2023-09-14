@@ -3,10 +3,11 @@ package main
 import (
 	// "company-project/handler"
 	"company-project/department"
+	"company-project/employee"
 	"company-project/handler"
 	"company-project/initializers"
 
-	// "company-project/user"
+	"company-project/user"
 	// "company-project/employee"
 	"log"
 
@@ -33,11 +34,17 @@ func main() {
 	departmentService := department.NewService(departmentRepository)
 	departmentHandler := handler.NewDepartmentHandler(departmentService)
 
+	employeeRepository := employee.NewRepository(db)
+
+	userRepository := user.NewRepository(db)
+	userService := user.NewService(userRepository,employeeRepository)
+	userHandler := handler.NewUserHandler(userService)
+
 	router := gin.Default()
 
 	routerV1 := router.Group("/v1")
 
-	routerV1.POST("/department", departmentHandler.PostBooksHandler)
+	routerV1.POST("/department", departmentHandler.PostDepartmentHandler)
 
 	routerV1.PUT("/department/:id", departmentHandler.UpdateDepartmentHandler)
 
@@ -47,23 +54,10 @@ func main() {
 
 	routerV1.GET("/department/:id", departmentHandler.GetDepartmentByID)
 
-	// routerV1.GET("/user/:id", userHandler.GetUserById)
 
-	// routerV1.POST("/signup", userHandler.Signup)
+	routerV1.POST("/signup", userHandler.CreateUserHandler)
 
 	// routerV1.POST("/login", userHandler.Login)
-
-	// routerV1Books := routerV1.Group("/book", middleware.RequireAuth)
-
-	// routerV1Books.POST("/books", bookHandler.PostBooksHandler)
-
-	// routerV1Books.GET("/books", bookHandler.GetAllBooks)
-
-	// routerV1Books.GET("/books/:id", bookHandler.GetBookById)
-
-	// routerV1Books.PUT("/books/:id", bookHandler.UpdateBookHandler)
-
-	// routerV1Books.DELETE("/books/:id", bookHandler.DeleteBook)
 
 	router.Run(":3030")
 }

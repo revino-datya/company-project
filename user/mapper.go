@@ -1,8 +1,10 @@
 package user
 
-func ConvertToUserResponse(u User) UserResponse {
-	return UserResponse{
-		Email:    u.Email,
-		Password: u.Password,
-	}
+func ConvertToUserResponse(user User) UserResponse {
+    return UserResponse{
+        ID:    user.ID,
+        Email: user.Email,
+        Name:  user.Employee.Name,
+        Phone: user.Employee.Phone,
+    }
 }

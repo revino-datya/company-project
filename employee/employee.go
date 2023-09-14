@@ -9,5 +9,5 @@ type Employee struct {
 	Name         string
 	Phone        int
 	UserID       uint `gorm:"unique"`
-	DepartmentID uint
+	DepartmentID *uint
 }
