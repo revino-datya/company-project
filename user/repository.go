@@ -9,8 +9,8 @@ type Repository interface {
 	Create(user User) (User, error)
 	FindAll() ([]User, error)
 	FindByID(ID uint) (User, error)
-	// Update(user User) (User, error)
-	// Delete(user User) error
+	Update(user User) (User, error)
+	Delete(user User) error
 	FindByEmail(email string) (User, error)
 }
 
@@ -44,17 +44,18 @@ func (r *repository) FindByID(ID uint) (User, error) {
 	return user, err
 }
 
-// // Update digunakan untuk memperbarui entitas User yang ada.
-// func (r *repository) Update(user User) (User, error) {
-// 	err := r.db.Save(&user).Error
-// 	return user, err
-// }
+// Update digunakan untuk memperbarui entitas User yang ada.
+func (r *repository) Update(user User) (User, error) {
+	err := r.db.Save(&user).Error
+	return user, err
+}
 
-// // Delete digunakan untuk menghapus entitas User yang ada.
-// func (r *repository) Delete(user User) error {
-// 	err := r.db.Delete(&user).Error
-// 	return err
-// }
+// Delete digunakan untuk menghapus entitas User yang ada.
+func (r *repository) Delete(user User) error {
+	err := r.db.Delete(&user).Error
+	return err
+}
+
 func (r *repository) FindByEmail(email string) (User, error) {
 	var user User
 	err := r.db.First(&user, "email = ?", email).Error

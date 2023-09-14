@@ -59,8 +59,11 @@ func main() {
 
 	routerV1.GET("/user", userHandler.GetAllUser)
 	routerV1.GET("/user/:id", userHandler.GetUserById)
-	routerV1.POST("/signup", userHandler.CreateUser)
 
+	routerV1.PUT("/user/:id", userHandler.UpdateUser)
+	routerV1.DELETE("/user/:id", userHandler.DeleteUser)
+
+	routerV1.POST("/signup", userHandler.CreateUser)
 	routerV1.POST("/login", userHandler.Login)
 
 	router.Run(":3030")
