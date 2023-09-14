@@ -1,9 +1,13 @@
 package user
 
 type UserRequest struct {
-    ID       uint   `json:"id"`
-    Email    string `json:"email"`
-    Password string `json:"password"`
-    Name     string `json:"name"`
-    Phone    int    `json:"phone"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
+	Name     string `json:"name"`
+	Phone    int    `json:"phone"`
+}
+
+type LoginRequest struct {
+	Email    string `binding:"required"`
+	Password string `binding:"required"`
 }

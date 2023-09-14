@@ -11,6 +11,7 @@ type Repository interface {
 	FindByID(ID uint) (User, error)
 	// Update(user User) (User, error)
 	// Delete(user User) error
+	FindByEmail(email string) (User, error)
 }
 
 // repository adalah implementasi dari Repository.
@@ -54,3 +55,8 @@ func (r *repository) FindByID(ID uint) (User, error) {
 // 	err := r.db.Delete(&user).Error
 // 	return err
 // }
+func (r *repository) FindByEmail(email string) (User, error) {
+	var user User
+	err := r.db.First(&user, "email = ?", email).Error
+	return user, err
+}
