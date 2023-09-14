@@ -45,7 +45,7 @@ func main() {
 
 	routerV1 := router.Group("/v1")
 
-	routerV1User := routerV1.Group("/user", middleware.RequireAuth)
+	routerV1User := routerV1.Group("", middleware.RequireAuth)
 
 	routerV1User.POST("/department", departmentHandler.PostDepartmentHandler)
 
@@ -57,7 +57,9 @@ func main() {
 
 	routerV1User.GET("/department/:id", departmentHandler.GetDepartmentByID)
 
-	routerV1.POST("/signup", userHandler.CreateUserHandler)
+	routerV1.GET("/user", userHandler.GetAllUser)
+	routerV1.GET("/user/:id", userHandler.GetUserById)
+	routerV1.POST("/signup", userHandler.CreateUser)
 
 	routerV1.POST("/login", userHandler.Login)
 

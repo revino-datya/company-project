@@ -12,7 +12,11 @@ import (
 )
 
 type Service interface {
-	CreateUser(userRequest UserRequest) (UserResponse, error)
+    CreateUser(userRequest UserRequest) (UserResponse, error)
+    FindAllUsers() ([]UserResponse, error)
+    FindUserByID(ID uint) (UserResponse, error)
+    // UpdateUser(ID uint, userRequest UserRequest) (UserResponse, error)
+    // DeleteUser(ID uint) error
 	Login(loginRequest LoginRequest) (string, error)
 }
 
@@ -85,3 +89,62 @@ func (s *service) Login(loginRequest LoginRequest) (string, error) {
 	}
 	return tokenString, nil
 }
+
+func (s *service) FindAllUsers() ([]UserResponse, error) {
+    // Dapatkan semua pengguna dari penyimpanan (misalnya database)
+    users, err := s.repository.FindAll()
+    if err != nil {
+        return nil, err
+    }
+
+    // Buat sebuah slice untuk menyimpan UserResponse
+    userResponses := make([]UserResponse, len(users))
+
+    // Map setiap entitas User ke UserResponse
+    for i, user := range users {
+        userResponses[i] = ConvertToUserResponse(user)
+    }
+
+    return userResponses, nil
+}
+
+func (s *service) FindUserByID(userID uint) (UserResponse, error) {
+    // Dapatkan pengguna berdasarkan ID dari penyimpanan (misalnya database)
+    user, err := s.repository.FindByID(userID)
+    if err != nil {
+        return UserResponse{}, err
+    }
+
+    // Konversi entitas User ke UserResponse menggunakan mapper
+    userResponse := ConvertToUserResponse(user)
+
+    return userResponse, nil
+}
+
+
+// func (s *service) UpdateUser(updateRequest UserRequest) (UserResponse, error) {
+//     // Dapatkan pengguna berdasarkan ID dari penyimpanan (misalnya database)
+//     user, err := s.repository.FindByID(updateRequest.ID)
+//     if err != nil {
+//         return UserResponse{}, err
+//     }
+
+//     // Update data pengguna dengan nilai yang diterima dari updateRequest
+//     user.Email = updateRequest.Email
+//     user.Name = updateRequest.Name
+//     user.Phone = updateRequest.Phone
+
+//     // Simpan perubahan ke penyimpanan
+//     if err := s.repository.Update(user); err != nil {
+//         return UserResponse{}, err
+//     }
+
+//     // Konversi entitas User yang telah diupdate ke UserResponse menggunakan mapper
+//     userResponse := ConvertToUserResponse(user)
+
+//     return userResponse, nil
+// }
+
+// func (s *service) DeleteUser(ID uint) error {
+//     // Implement the logic to delete a user by ID
+// }
