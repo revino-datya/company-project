@@ -21,12 +21,14 @@ type Service interface {
 }
 
 type service struct {
-	repository   Repository
-	employeeRepo employee.Repository
+	repository Repository
+	// employeeRepo employee.Repository
 }
 
-func NewService(repository Repository, employeeRepo employee.Repository) Service {
-	return &service{repository, employeeRepo}
+// func NewService(repository Repository, employeeRepo employee.Repository) Service {
+func NewService(repository Repository) Service {
+	// return &service{repository, employeeRepo}
+	return &service{repository}
 }
 
 func (s *service) CreateUser(userRequest UserRequest) (UserResponse, error) {
@@ -121,6 +123,42 @@ func (s *service) FindUserByID(userID uint) (UserResponse, error) {
 	return userResponse, nil
 }
 
+// func (s *service) UpdateUser(userID uint, userRequest UserRequest) (UserResponse, error) {
+// 	// Cari pengguna berdasarkan ID
+// 	existingUser, err := s.repository.FindByID(userID)
+// 	if err != nil {
+// 		return UserResponse{}, err
+// 	}
+
+// 	// Jika userRequest.Password tidak kosong, maka kita perlu menghash password yang baru
+// 	if userRequest.Password != "" {
+// 		// Generate hashed password
+// 		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(userRequest.Password), bcrypt.DefaultCost)
+// 		if err != nil {
+// 			return UserResponse{}, err
+// 		}
+// 		// Update password
+// 		existingUser.Password = string(hashedPassword)
+// 	}
+
+// 	// Update data lainnya
+// 	existingUser.Email = userRequest.Email
+// 	existingUser.Employee.Name = userRequest.Name
+// 	existingUser.Employee.Phone = userRequest.Phone
+// 	// existingUser.Employee.DepartmentID = userRequest.Department
+
+// 	// Simpan perubahan ke database
+// 	updatedUser, err := s.repository.Update(existingUser)
+// 	if err != nil {
+// 		return UserResponse{}, err
+// 	}
+
+// 	// Gunakan mapper untuk mengonversi User entity yang diperbarui ke UserResponse
+// 	userResponse := ConvertToUserResponse(updatedUser)
+
+// 	return userResponse, nil
+// }
+
 func (s *service) UpdateUser(userID uint, userRequest UserRequest) (UserResponse, error) {
 	// Cari pengguna berdasarkan ID
 	existingUser, err := s.repository.FindByID(userID)
@@ -128,21 +166,20 @@ func (s *service) UpdateUser(userID uint, userRequest UserRequest) (UserResponse
 		return UserResponse{}, err
 	}
 
-	// Jika userRequest.Password tidak kosong, maka kita perlu menghash password yang baru
+	// Update data pengguna (Email, Password jika ada)
+	existingUser.Email = userRequest.Email
 	if userRequest.Password != "" {
-		// Generate hashed password
 		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(userRequest.Password), bcrypt.DefaultCost)
 		if err != nil {
 			return UserResponse{}, err
 		}
-		// Update password
 		existingUser.Password = string(hashedPassword)
 	}
 
-	// Update data lainnya
-	existingUser.Email = userRequest.Email
+	// Update data Employee
 	existingUser.Employee.Name = userRequest.Name
 	existingUser.Employee.Phone = userRequest.Phone
+	// Jika Anda ingin mengupdate DepartmentID juga, Anda dapat melakukannya di sini
 	// existingUser.Employee.DepartmentID = userRequest.Department
 
 	// Simpan perubahan ke database
@@ -180,18 +217,39 @@ func (s *service) UpdateUser(userID uint, userRequest UserRequest) (UserResponse
 //     return userResponse, nil
 // }
 
+// func (s *service) DeleteUser(userID uint) error {
+// 	// Cari pengguna berdasarkan ID
+// 	userToDelete, err := s.repository.FindByID(userID)
+// 	if err != nil {
+// 		return err // Return error if user is not found
+// 	}
+
+// 	// Hapus pengguna dari database
+// 	err = s.repository.Delete(userToDelete)
+// 	if err != nil {
+// 		return err // Return error if there was an issue deleting the user
+// 	}
+
+// 	return nil // Return nil if user is successfully deleted
+// }
+
 func (s *service) DeleteUser(userID uint) error {
 	// Cari pengguna berdasarkan ID
-	userToDelete, err := s.repository.FindByID(userID)
+	existingUser, err := s.repository.FindByID(userID)
 	if err != nil {
-		return err // Return error if user is not found
+		return err
 	}
 
 	// Hapus pengguna dari database
-	err = s.repository.Delete(userToDelete)
+	err = s.repository.Delete(existingUser)
 	if err != nil {
-		return err // Return error if there was an issue deleting the user
+		return err
 	}
 
-	return nil // Return nil if user is successfully deleted
+	// Jika pengguna telah berhasil dihapus, Anda juga dapat menghapus data Employee yang sesuai
+	// Ini hanya akan berfungsi jika ada hubungan referensial antara User dan Employee,
+	// dan database Anda mendukung cascading delete.
+	// Jika tidak, Anda harus menghapus Employee terpisah setelah menghapus User.
+
+	return nil
 }

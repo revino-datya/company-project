@@ -3,7 +3,6 @@ package main
 import (
 	// "company-project/handler"
 	"company-project/department"
-	"company-project/employee"
 	"company-project/handler"
 	"company-project/initializers"
 	"company-project/middleware"
@@ -35,10 +34,11 @@ func main() {
 	departmentService := department.NewService(departmentRepository)
 	departmentHandler := handler.NewDepartmentHandler(departmentService)
 
-	employeeRepository := employee.NewRepository(db)
+	// employeeRepository := employee.NewRepository(db)
 
 	userRepository := user.NewRepository(db)
-	userService := user.NewService(userRepository, employeeRepository)
+	// userService := user.NewService(userRepository, employeeRepository)
+	userService := user.NewService(userRepository)
 	userHandler := handler.NewUserHandler(userService)
 
 	router := gin.Default()

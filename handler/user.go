@@ -111,7 +111,6 @@ func (h *userHandler) UpdateUser(c *gin.Context) {
 }
 
 func (h *userHandler) GetAllUser(c *gin.Context) {
-	// Panggil service untuk mengambil semua pengguna
 	userResponses, err := h.userService.FindAllUsers()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -126,7 +125,6 @@ func (h *userHandler) GetAllUser(c *gin.Context) {
 }
 
 func (h *userHandler) GetUserById(c *gin.Context) {
-	// Ambil ID pengguna dari parameter URL
 	userIDParam := c.Param("id")
 
 	// Ubah ID pengguna menjadi tipe data yang sesuai (misalnya uint)
@@ -187,6 +185,31 @@ func (h *userHandler) Login(c *gin.Context) {
 		},
 	})
 }
+
+// func (h *userHandler) DeleteUser(c *gin.Context) {
+// 	// Mendapatkan ID pengguna dari URL atau permintaan
+// 	userIDStr := c.Param("id")
+// 	userID, err := strconv.ParseUint(userIDStr, 10, 64)
+// 	if err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{
+// 			"errors": "Invalid user ID",
+// 		})
+// 		return
+// 	}
+
+// 	// Menggunakan service untuk menghapus pengguna
+// 	err = h.userService.DeleteUser(uint(userID))
+// 	if err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{
+// 			"errors": err.Error(),
+// 		})
+// 		return
+// 	}
+
+// 	c.JSON(http.StatusOK, gin.H{
+// 		"message": "User deleted successfully",
+// 	})
+// }
 
 func (h *userHandler) DeleteUser(c *gin.Context) {
 	// Mendapatkan ID pengguna dari URL atau permintaan
