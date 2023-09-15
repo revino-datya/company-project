@@ -8,7 +8,7 @@ import (
 type Repository interface {
 	Create(user User) (User, error)
 	FindAll() ([]User, error)
-	FindUserByIDWithEmployee(ID uint) (User, error)
+	FindByID(ID uint) (User, error)
 	Update(user User) (User, error)
 	Delete(user User) error
 	FindByEmail(email string) (User, error)
@@ -33,14 +33,15 @@ func (r *repository) Create(user User) (User, error) {
 // FindAll digunakan untuk mendapatkan semua entitas User dari database.
 func (r *repository) FindAll() ([]User, error) {
 	var users []User
-	err := r.db.Find(&users).Error
+	err := r.db.Preload("Employee").Find(&users).Error
 	return users, err
 }
 
-func (r *repository) FindUserByIDWithEmployee(userID uint) (User, error) {
-    var user User
-    err := r.db.Preload("Employee").First(&user, userID).Error
-    return user, err
+// FindByID digunakan untuk mencari entitas User berdasarkan ID.
+func (r *repository) FindByID(ID uint) (User, error) {
+	var user User
+	err := r.db.Preload("Employee").First(&user, ID).Error
+	return user, err
 }
 
 // Update digunakan untuk memperbarui entitas User yang ada.
