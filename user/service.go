@@ -15,7 +15,7 @@ type Service interface {
 	CreateUser(userRequest UserRequest) (UserResponse, error)
 	FindAllUsers() ([]UserResponse, error)
 	FindUserByID(ID uint) (UserResponse, error)
-	UpdateUser(ID uint, userRequest UserRequest) (UserResponse, error)
+	UpdateUser(ID uint, userUpdateRequest UserUpdateRequest) (UserResponse, error)
 	DeleteUser(ID uint) error
 	Login(loginRequest LoginRequest) (string, error)
 }
@@ -159,7 +159,7 @@ func (s *service) FindUserByID(userID uint) (UserResponse, error) {
 // 	return userResponse, nil
 // }
 
-func (s *service) UpdateUser(userID uint, userRequest UserRequest) (UserResponse, error) {
+func (s *service) UpdateUser(userID uint, userUpdateRequest UserUpdateRequest) (UserResponse, error) {
 	// Cari pengguna berdasarkan ID
 	existingUser, err := s.repository.FindByID(userID)
 	if err != nil {
@@ -167,9 +167,9 @@ func (s *service) UpdateUser(userID uint, userRequest UserRequest) (UserResponse
 	}
 
 	// Update data pengguna (Email, Password jika ada)
-	existingUser.Email = userRequest.Email
-	if userRequest.Password != "" {
-		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(userRequest.Password), bcrypt.DefaultCost)
+	existingUser.Email = userUpdateRequest.Email
+	if userUpdateRequest.Password != "" {
+		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(userUpdateRequest.Password), bcrypt.DefaultCost)
 		if err != nil {
 			return UserResponse{}, err
 		}
@@ -177,10 +177,10 @@ func (s *service) UpdateUser(userID uint, userRequest UserRequest) (UserResponse
 	}
 
 	// Update data Employee
-	existingUser.Employee.Name = userRequest.Name
-	existingUser.Employee.Phone = userRequest.Phone
+	existingUser.Employee.Name = userUpdateRequest.Name
+	existingUser.Employee.Phone = userUpdateRequest.Phone
 	// Jika Anda ingin mengupdate DepartmentID juga, Anda dapat melakukannya di sini
-	// existingUser.Employee.DepartmentID = userRequest.Department
+	existingUser.Employee.DepartmentID = &userUpdateRequest.Department
 
 	// Simpan perubahan ke database
 	updatedUser, err := s.repository.Update(existingUser)
