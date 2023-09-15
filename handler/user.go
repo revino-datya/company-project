@@ -73,7 +73,7 @@ func (h *userHandler) UpdateUser(c *gin.Context) {
 	}
 
 	// Membaca data permintaan JSON
-	var userRequest user.UserRequest
+	var userRequest user.UserUpdateRequest
 	err = c.ShouldBindJSON(&userRequest)
 	if err != nil {
 		switch err.(type) {

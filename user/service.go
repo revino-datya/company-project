@@ -15,7 +15,7 @@ type Service interface {
 	CreateUser(userRequest UserRequest) (UserResponse, error)
 	FindAllUsers() ([]UserResponse, error)
 	FindUserByID(ID uint) (UserResponse, error)
-	UpdateUser(ID uint, userRequest UserRequest) (UserResponse, error)
+	UpdateUser(ID uint, userRequest UserUpdateRequest) (UserResponse, error)
 	DeleteUser(ID uint) error
 	Login(loginRequest LoginRequest) (string, error)
 }
@@ -110,7 +110,7 @@ func (s *service) FindAllUsers() ([]UserResponse, error) {
 
 func (s *service) FindUserByID(userID uint) (UserResponse, error) {
 	// Dapatkan pengguna berdasarkan ID dari penyimpanan (misalnya database)
-	user, err := s.repository.FindByID(userID)
+	user, err := s.repository.FindUserByIDWithEmployee(userID)
 	if err != nil {
 		return UserResponse{}, err
 	}
@@ -121,9 +121,9 @@ func (s *service) FindUserByID(userID uint) (UserResponse, error) {
 	return userResponse, nil
 }
 
-func (s *service) UpdateUser(userID uint, userRequest UserRequest) (UserResponse, error) {
-	// Cari pengguna berdasarkan ID
-	existingUser, err := s.repository.FindByID(userID)
+func (s *service) UpdateUser(userID uint, userRequest UserUpdateRequest) (UserResponse, error) {
+	// Cari pengguna berdasarkan ID dengan preload Employee
+	existingUser, err := s.repository.FindUserByIDWithEmployee(userID)
 	if err != nil {
 		return UserResponse{}, err
 	}
@@ -143,7 +143,7 @@ func (s *service) UpdateUser(userID uint, userRequest UserRequest) (UserResponse
 	existingUser.Email = userRequest.Email
 	existingUser.Employee.Name = userRequest.Name
 	existingUser.Employee.Phone = userRequest.Phone
-	// existingUser.Employee.DepartmentID = userRequest.Department
+	existingUser.Employee.DepartmentID = userRequest.Department
 
 	// Simpan perubahan ke database
 	updatedUser, err := s.repository.Update(existingUser)
@@ -157,32 +157,9 @@ func (s *service) UpdateUser(userID uint, userRequest UserRequest) (UserResponse
 	return userResponse, nil
 }
 
-// func (s *service) UpdateUser(updateRequest UserRequest) (UserResponse, error) {
-//     // Dapatkan pengguna berdasarkan ID dari penyimpanan (misalnya database)
-//     user, err := s.repository.FindByID(updateRequest.ID)
-//     if err != nil {
-//         return UserResponse{}, err
-//     }
-
-//     // Update data pengguna dengan nilai yang diterima dari updateRequest
-//     user.Email = updateRequest.Email
-//     user.Name = updateRequest.Name
-//     user.Phone = updateRequest.Phone
-
-//     // Simpan perubahan ke penyimpanan
-//     if err := s.repository.Update(user); err != nil {
-//         return UserResponse{}, err
-//     }
-
-//     // Konversi entitas User yang telah diupdate ke UserResponse menggunakan mapper
-//     userResponse := ConvertToUserResponse(user)
-
-//     return userResponse, nil
-// }
-
 func (s *service) DeleteUser(userID uint) error {
 	// Cari pengguna berdasarkan ID
-	userToDelete, err := s.repository.FindByID(userID)
+	userToDelete, err := s.repository.FindUserByIDWithEmployee(userID)
 	if err != nil {
 		return err // Return error if user is not found
 	}

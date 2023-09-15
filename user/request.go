@@ -17,5 +17,5 @@ type UserUpdateRequest struct {
 	Password   string `json:"password"`
 	Name       string `json:"name"`
 	Phone      int    `json:"phone"`
-	Department uint   `json:"department"`
+	Department *uint   `json:"department"`
 }
