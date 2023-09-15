@@ -46,13 +46,13 @@ func (r *repository) FindByID(ID uint) (User, error) {
 
 // Update digunakan untuk memperbarui entitas User yang ada.
 func (r *repository) Update(user User) (User, error) {
-	err := r.db.Save(&user).Error
+	err := r.db.Session(&gorm.Session{FullSaveAssociations: true}).Save(&user).Error
 	return user, err
 }
 
 // Delete digunakan untuk menghapus entitas User yang ada.
 func (r *repository) Delete(user User) error {
-	err := r.db.Delete(&user).Error
+	err := r.db.Select("Employee").Delete(&user).Error
 	return err
 }
 

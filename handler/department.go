@@ -10,7 +10,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
-	// "github.com/golang-jwt/jwt/v5"
 )
 
 type departmentHandler struct {

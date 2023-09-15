@@ -8,6 +8,6 @@ import (
 
 type Department struct {
 	gorm.Model
-	Name     string
+	Name     string `gorm:"size:20"`
 	Employee []employee.Employee
 }

@@ -6,7 +6,7 @@ import (
 
 type Employee struct {
 	gorm.Model
-	Name         string
+	Name         string `gorm:"size:35"`
 	Phone        int
 	UserID       uint `gorm:"unique"`
 	DepartmentID *uint
