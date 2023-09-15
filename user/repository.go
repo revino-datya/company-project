@@ -33,14 +33,14 @@ func (r *repository) Create(user User) (User, error) {
 // FindAll digunakan untuk mendapatkan semua entitas User dari database.
 func (r *repository) FindAll() ([]User, error) {
 	var users []User
-	err := r.db.Find(&users).Error
+	err := r.db.Preload("Employee").Find(&users).Error
 	return users, err
 }
 
 // FindByID digunakan untuk mencari entitas User berdasarkan ID.
 func (r *repository) FindByID(ID uint) (User, error) {
 	var user User
-	err := r.db.First(&user, ID).Error
+	err := r.db.Preload("Employee").First(&user, ID).Error
 	return user, err
 }
 

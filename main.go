@@ -7,8 +7,8 @@ import (
 	"company-project/initializers"
 	"company-project/middleware"
 
+	"company-project/employee"
 	"company-project/user"
-	// "company-project/employee"
 	"log"
 
 	"github.com/gin-gonic/gin"
@@ -34,7 +34,9 @@ func main() {
 	departmentService := department.NewService(departmentRepository)
 	departmentHandler := handler.NewDepartmentHandler(departmentService)
 
-	// employeeRepository := employee.NewRepository(db)
+	employeeRepository := employee.NewRepository(db)
+	employeeService := employee.NewService(employeeRepository)
+	employeeHandler := handler.NewEmployeeHandler(employeeService)
 
 	userRepository := user.NewRepository(db)
 	// userService := user.NewService(userRepository, employeeRepository)
@@ -56,6 +58,8 @@ func main() {
 	routerV1User.GET("/department", departmentHandler.GetAllDepartments)
 
 	routerV1User.GET("/department/:id", departmentHandler.GetDepartmentByID)
+
+	routerV1.GET("/employee", employeeHandler.GetAllEmployee)
 
 	routerV1.GET("/user", userHandler.GetAllUser)
 	routerV1.GET("/user/:id", userHandler.GetUserById)

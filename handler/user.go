@@ -124,31 +124,31 @@ func (h *userHandler) GetAllUser(c *gin.Context) {
 	})
 }
 
-func (h *userHandler) GetUserById(c *gin.Context) {
-	userIDParam := c.Param("id")
+// func (h *userHandler) GetUserById(c *gin.Context) {
+// 	userIDParam := c.Param("id")
 
-	// Ubah ID pengguna menjadi tipe data yang sesuai (misalnya uint)
-	userID, err := strconv.ParseUint(userIDParam, 10, 64)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"errors": "Invalid user ID",
-		})
-		return
-	}
+// 	// Ubah ID pengguna menjadi tipe data yang sesuai (misalnya uint)
+// 	userID, err := strconv.ParseUint(userIDParam, 10, 64)
+// 	if err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{
+// 			"errors": "Invalid user ID",
+// 		})
+// 		return
+// 	}
 
-	// Panggil service untuk mengambil pengguna berdasarkan ID
-	userResponse, err := h.userService.FindUserByID(uint(userID))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"errors": err,
-		})
-		return
-	}
+// 	// Panggil service untuk mengambil pengguna berdasarkan ID
+// 	userResponse, err := h.userService.FindUserByID(uint(userID))
+// 	if err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{
+// 			"errors": err,
+// 		})
+// 		return
+// 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"data": userResponse,
-	})
-}
+// 	c.JSON(http.StatusOK, gin.H{
+// 		"data": userResponse,
+// 	})
+// }
 
 func (h *userHandler) Login(c *gin.Context) {
 	var loginRequest user.LoginRequest
